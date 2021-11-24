@@ -20,6 +20,8 @@ data class Tienda(val nombre: String, val clientes: List<Clientes>) {
 
     fun obtenerClientesConPedidosSinEntregar(): Set<Clientes> = TODO()
 
+    fun obtenerProductosPedidos(): Set<Producto> = TODO()
+
 }
 
 // Cambios Para Commit
@@ -28,7 +30,7 @@ data class Tienda(val nombre: String, val clientes: List<Clientes>) {
 data class Clientes(val nombre: String, val ciudad: Ciudad, val pedidos: List<Pedido>) {
     override fun toString() = "$nombre from ${ciudad.nombre}"
 
-    fun obtenerProductosPedidos(): List<Producto> = TODO()
+    fun obtenerProductosPedidos(): List<Producto> = pedidos.flatMap { it.productos }
 
 }
 

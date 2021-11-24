@@ -22,6 +22,8 @@ data class Tienda(val nombre: String, val clientes: List<Clientes>) {
 
 }
 
+// Cambios Para Commit
+
 // CLIENTES
 data class Clientes(val nombre: String, val ciudad: Ciudad, val pedidos: List<Pedido>) {
     override fun toString() = "$nombre from ${ciudad.nombre}"

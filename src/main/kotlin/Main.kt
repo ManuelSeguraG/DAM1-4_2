@@ -6,9 +6,9 @@ data class Tienda(val nombre: String, val clientes: List<Clientes>) {
 
     fun obtenerCiudadesDeClientes(): Set<Ciudad> = clientes.map { it.ciudad }.toSet()
 
-    fun obtenerClientesPor(ciudad:Ciudad): List<Clientes> = clientes.filter { it.ciudad == ciudad }
+    fun obtenerClientesPor(ciudad: Ciudad): List<Clientes> = clientes.filter { it.ciudad == ciudad }
 
-    fun checkTodosClientesSonDe(ciudad : Ciudad): Boolean = clientes.all { it.ciudad == ciudad }
+    fun checkTodosClientesSonDe(ciudad: Ciudad): Boolean = clientes.all { it.ciudad == ciudad }
 
     fun hayClientesDe(ciudad: Ciudad): Boolean = clientes.any { it.ciudad == ciudad }
 
@@ -18,13 +18,33 @@ data class Tienda(val nombre: String, val clientes: List<Clientes>) {
 
     fun obtenerClientesOrdenadosPorPedidos(): List<Clientes> = clientes.sortedByDescending { it.pedidos.size }
 
-    fun obtenerClientesConPedidosSinEntregar(): Set<Clientes> = TODO()
+    fun obtenerClientesConPedidosSinEntregar(): Set<Clientes> =
+        clientes.filter { it.pedidos.any { it.estaEntregado == false } }.toSet()
 
-    fun obtenerProductosPedidos(): Set<Producto> = TODO()
+    fun obtenerProductosPedidos(): Set<Producto> =
+        clientes.flatMap { it.pedidos.flatMap { it.productos } }.toSet()
+
+    fun obtenerNumeroVecesProductoPedido(producto: Producto): Int = obtenerProductosPedidos().count { it.equals(producto) }
+
+//        var cantidadSolicitada: Int = 0
+//        clientes.forEach {
+//            it.pedidos.forEach {
+//                it.productos.forEach {
+//                    if (it.equals(producto)) {
+//                        cantidadSolicitada++
+//                    }
+//                }
+//            }
+//
+//        }
+//
+//        return cantidadSolicitada
+//
+//    }
+
+    fun agrupaClientesPorCiudad(): Map<Ciudad, List<Clientes>> = clientes.groupBy { it.ciudad }
 
 }
-
-// Cambios Para Commit
 
 // CLIENTES
 data class Clientes(val nombre: String, val ciudad: Ciudad, val pedidos: List<Pedido>) {
@@ -32,7 +52,19 @@ data class Clientes(val nombre: String, val ciudad: Ciudad, val pedidos: List<Pe
 
     fun obtenerProductosPedidos(): List<Producto> = pedidos.flatMap { it.productos }
 
+    fun encuentraProductoMasCaro(): Producto? = obtenerProductosPedidos().sortedBy { it.precio }[0]
+
+    fun dineroGastado(): Double {
+        var cantidadGastada: Double = 0.0
+        pedidos.forEach {
+            if (it.estaEntregado) {
+                it.productos.forEach { cantidadGastada += it.precio }
+            }
+        }
+        return cantidadGastada
+    }
 }
+
 
 // PEDIDO
 data class Pedido(val productos: List<Producto>, val estaEntregado: Boolean)
@@ -48,9 +80,6 @@ data class Ciudad(val nombre: String) {
 }
 
 // MAIN
-fun main(args: Array<String>) {
-    println("Hello World!")
+fun main() {
 
-    // Try adding program arguments at Run/Debug configuration
-    println("Program arguments: ${args.joinToString()}")
 }
